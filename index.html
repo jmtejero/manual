@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang='es'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>MANUAL PROLOGIC</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #111;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      position: relative;
+      margin: 0;
+      padding: 2rem;
+      background: #f4f7fb;
+      scroll-behavior: smooth;
+    }
+
+    .watermark {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.08;
+    }
+
+    .watermark img {
+      max-width: min(70vw, 650px);
+      width: auto;
+      opacity: 0.08;
+      filter: grayscale(100%) brightness(1.05);
+      transform: rotate(-18deg);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      margin: auto;
+      padding: 2rem;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 18px 45px rgba(28, 41, 63, 0.1);
+    }
+
+    .document-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+      gap: 2rem;
+      padding: 1.5rem 1.5rem 2rem;
+      background: linear-gradient(180deg, rgba(0, 107, 255, 0.08), rgba(255, 255, 255, 0.9));
+      border: 1px solid rgba(0, 107, 255, 0.13);
+      border-radius: 18px;
+      margin-bottom: 1.75rem;
+      align-items: start;
+    }
+
+    .page-layout {
+      display: grid;
+      grid-template-columns: 20% minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    .document-content {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .document-content {
+      width: 100%;
+    }
+
+    .header-branding {
+      display: grid;
+      gap: 1.5rem;
+      justify-items: center;
+      text-align: center;
+      justify-self: center;
+    }
+
+    .brand-stack {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+
+    .brand-stack img {
+      width: 160px;
+      height: auto;
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .brand-stack img:first-child {
+      transform: translateX(-10px) scale(0.98);
+      z-index: 2;
+    }
+
+    .brand-stack img:last-child {
+      transform: translateX(10px) scale(0.9);
+      opacity: 0.95;
+    }
+
+    .document-title {
+      display: grid;
+      gap: 1rem;
+      justify-items: center;
+      text-align: center;
+      max-width: 540px;
+    }
+
+    .document-title h1 {
+      margin: 0;
+      font-size: clamp(3.2rem, 4vw, 4.8rem);
+      line-height: 1.02;
+    }
+
+    .document-description {
+      margin: 0;
+      max-width: 42rem;
+      color: #334155;
+    }
+
+    .document-meta {
+      display: grid;
+      gap: 0.45rem;
+      align-content: start;
+      justify-self: end;
+      text-align: right;
+      font-size: 0.88rem;
+      color: #475467;
+    }
+
+    .document-meta p {
+      margin: 0;
+      color: #64748b;
+    }
+
+    .document-meta strong {
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .toc-panel {
+      padding: 1.2rem 1.25rem 1rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: #f8fafc;
+      width: 100%;
+      max-width: none;
+      max-height: calc(100vh - 5rem);
+      overflow: auto;
+    }
+
+    .toc-panel h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      color: #0f172a;
+    }
+
+    .toc-search {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #0f172a;
+      outline: none;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+    }
+
+    .toc-search::placeholder {
+      color: #94a3b8;
+    }
+
+    .toc-status {
+      margin: 0 0 1rem;
+      color: #475467;
+      font-size: 0.95rem;
+    }
+
+    .toc {
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #0f172a;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .toc a:hover,
+    .toc a:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    .toc a::before {
+      content: '•';
+      margin-right: 0.75rem;
+      color: #3b82f6;
+    }
+
+    .toc-empty {
+      display: none;
+      margin: 0;
+      color: #64748b;
+    }
+
+    @media (min-width: 900px) {
+      .toc-panel {
+        position: sticky;
+        top: 2rem;
+        align-self: start;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .document-header {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #0d1a26;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 2.5vw, 2.75rem);
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: clamp(1.35rem, 1.7vw, 1.65rem);
+    }
+
+    h4 {
+      font-size: clamp(1.15rem, 1.4vw, 1.35rem);
+    }
+
+    blockquote {
+      border-left: 4px solid #0078d7;
+      padding: 1rem 1.25rem;
+      background: #eef6ff;
+      margin: 1.25rem 0;
+    }
+
+    p {
+      margin: 0 0 1rem;
+      line-height: 1.75;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 1rem 1.5rem;
+      line-height: 1.7;
+    }
+
+    code,
+    pre {
+      font-family: Consolas, monospace;
+      background: #f5f5f5;
+      padding: 0.25rem 0.4rem;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    th,
+    td {
+      border: 1px solid #d1d5db;
+      padding: 0.75rem;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1.5rem auto;
+    }
+
+    a {
+      color: #0056b3;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    strong {
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="document-header">
+      <div class="header-branding">
+        <div class="brand-stack" aria-label="Logos de Electrodomésticos JATA y Logical Rioja">
+          <img src="logo-jata.jpg" alt="Electrodomésticos JATA logo" />
+          <img src="icono_logical.jpg" alt="Logical Rioja logo" />
+        </div>
+        <div class="document-title">
+              <h1>Manual de usuario</h1>
+          <p class="document-description">Guía práctica para conocer todos los procesos de trabajo con ERP Prologic para
+            el Grupo JATA.</p>
+        </div>
+      </div>
+      <div class="document-meta">
+        <p><strong>Autor:</strong> José Mª Tejero</p>
+        <p><strong>Email:</strong> Josemaria.tejero@logicalrioja.com</p>
+        <p><strong>Empresa:</strong> Logical Rioja</p>
+        <p><strong>Versiones:</strong> V1.0 01/07/26 · V2.0 16/07/26</p>
+      </div>
+    </section>
+    <div class="page-layout">
+      <aside class="toc-panel">
+        <h2>Contenido</h2>
+        <input id="tocSearch" class="toc-search" type="search" placeholder="Buscar sección..."
+          aria-label="Buscar sección en el documento" />
+        <p id="tocCount" class="toc-status" aria-live="polite">Usa el buscador para filtrar secciones.</p>
+        <nav class="toc" aria-label="Índice de contenido">
+          <a href="#_Toc235107825">Aspectos generales del programa de gestión</a>
+          <a href="#_Toc235107826"> Pantallas de inicio (visión general)</a>
+          <a href="#_Toc235107827"> Botones</a>
+          <a href="#_Toc235107828"> Como crear botones personalizados</a>
+          <a href="#_Toc235107829"> Filtros</a>
+          <a href="#_Toc235107830"> Vistas</a>
+          <a href="#_Toc235107831">PEDIDO DE AMAZON DECA</a>
+          <a href="#_Toc235107832"> Integración de pedidos</a>
+          <a href="#_Toc235107833"> Aceptar pedidos de Amazon</a>
+          <a href="#_Toc235107834"> Como sabemos los pedidos que tenemos pendientes</a>
+          <a href="#_Toc235107835"> Pasar los pedidos a albaranes</a>
+          <a href="#_Toc235107836"> Movimientos de almacén</a>
+          <a href="#_Toc235107837">PEDIDOS DE COMPRAS</a>
+          <a href="#_Toc235107838">BLOQUEO DE PEDIDOS</a>
+          <a href="#_Toc235107839">ERRORES AL INTEGRAR</a>
+          <a href="#_Toc235107840">INTEGRACIÓN DE PEDIDOS (ASPECTOS TÉCNICOS)</a>
+          <a href="#_Toc235107841">CLIENTE NO TIENE GLN</a>
+          <a href="#_Toc235107842">INCIDENCIA AL ACEPTAR PEDIDO</a>
+          <a href="#_Toc235107843">OFICINA DE ALMACÉN</a>
+          <a href="#_Toc235107844">Albaranes activos</a>
+          <a href="#_Toc235107845">Generar resumen</a>
+          <a href="#_Toc235107846">Bultos con picos</a>
+          <a href="#_Toc235107847">Etiquetas</a>
+          <a href="#_Toc235107848">Envíos a agencia</a>
+          <a href="#_Toc235107849">Uso de PDA</a>
+        </nav>
+        <p id="tocEmpty" class="toc-empty">No se ha encontrado ninguna sección para esa búsqueda.</p>
+      </aside>
+      <div class="document-content">
+        <script>
+          (function () {
+            const tocSearch = document.getElementById('tocSearch');
+            const tocLinks = Array.from(document.querySelectorAll('.toc a'));
+            const tocCount = document.getElementById('tocCount');
+            const tocEmpty = document.getElementById('tocEmpty');
+
+            function updateTocStatus(filteredCount, total) {
+              if (filteredCount === total) {
+                tocCount.textContent = 'Mostrando todas las secciones.';
+              } else if (filteredCount === 0) {
+                tocCount.textContent = 'No se ha encontrado ninguna sección para esa búsqueda.';
+              } else {
+                tocCount.textContent = `Mostrando ${filteredCount} de ${total} secciones.`;
+              }
+            }
+
+            function filterToc() {
+              const query = tocSearch.value.trim().toLowerCase();
+              let visibleCount = 0;
+
+              tocLinks.forEach((link) => {
+                const matches = !query || link.textContent.toLowerCase().includes(query);
+                link.style.display = matches ? 'block' : 'none';
+                if (matches) visibleCount += 1;
+              });
+
+              tocEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
+              updateTocStatus(visibleCount, tocLinks.length);
+            }
+
+            tocSearch.addEventListener('input', filterToc);
+            filterToc();
+          })();
+        </script>
+
+        <h3><a id="_Toc235107825"></a>Aspectos generales del programa de gestión</h3>
+                </a>
+        <h4><a id="_Toc235107826"></a>Pantallas de inicio (visión general)</h4>
+        <p>Al acceder al programa seleccionando nuestro usuario e introduciendo la contraseña, tenemos esta pantalla
+          inicial.</p>
+        <a href="https://logicalriojasl-my.sharepoint.com/:v:/g/personal/josemaria_tejero_logicalrioja_com/IQAcsMHpXYs0S5r4EPxzCX8PAXnHRGP7xURz4D-NlE4Z-n0?e=znfQLV" target="_blank">
+          Ver video </a>
+        <p><img src="Prologic Grupo JATA v2.0_files/image1.png" /></p>
+        <p>En el lateral izquierdo está oculta la barra de opciones principales del programa. Si pulsamos sobre Programa
+          se muestran todos los accesos al programa de gestión.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image2.png" /></p>
+        <p>Como se muestra en la imagen de la derecha, accedemos a todas categorías principales.</p>
+        <p>Por destacar las más utilizadas, en <strong>Almacén</strong>, encontramos los artículos, o en
+          <strong>Ventas</strong>, tendremos los pedidos, albaranes y facturas para la gestión comercial.
+        </p>
+        <p>Vamos a mostrar para que sirve cada entrada y más adelante veremos paso a paso cada uno. </p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image3.png" />Administración</strong> 🡪 generalmente solo
+          accederán a esta opción personas con los permisos suficientes para realizar cambios importantes en el
+          programa, tanto para modificar como para crear o eliminar opciones. Generalmente, una vez se configuran
+          adecuadamente cada una de estas entradas, no es necesario estar accediendo constantemente a estas opciones,
+          salvo el administrador para realizar cambios en determinadas propiedades que haya que cambiar por exigencias
+          del trabajo diario.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image4.png" /></p>
+        <p><strong>Agenda</strong> 🡪 Nos muestra un calendario donde podemos asignar a otros compañeros o a nosotros
+          mismos tareas y marcar tiempos para llevarlas a cabo. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image5.png" /></p>
+        <p><strong>Almacén</strong> 🡪 se indicarán los nombres de todos los almacenes que tenga la empresa. Una entrada
+          muy importante es la de los <strong>artículos</strong>, donde podemos dar de alta o modificar sus propiedades.
+          Se puede configurar la manera como trabajará el almacén, determinando los lotes, los métodos de valoración,
+          los números de serie… Esta sección también estará acotada para que solamente las personas con los permisos
+          necesarios puedan realizar cambios, puesto que supone un riesgo importante cualquier modificación que se lleve
+          a cabo.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image6.png" />Caja</strong> 🡪 Sección importante para el
+          departamento financiero donde se muestran los apuntes relacionados con pagos, cobros o remesas. (generalmente,
+          se utiliza el programa Contaprologic para llevar esta parte financiera, pero pueden estar relacionadas para
+          contener la información completa de la empresa a nivel comercial y contable)</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image7.png" />Compras</strong> 🡪 la gestión de todos los
+          pedidos, albaranes y facturas de compras. En el caso del Grupo JATA se ha añadido como valor importante, los
+          créditos documentarios, y lo seguros de cambio que favorecen contar con la mayor información posible, a la
+          hora de gestionar el pedido con el proveedor.</p>
+        <p>Así mismo, en cada de una de estas gestiones, podemos visualizar estadísticas a tiempo real de cada uno de
+          los documentos generados.</p>
+        <p>Por destacar en esta pantalla, ya que aparecen las <strong>tarifas</strong> de compras, y la importancia de
+          <strong>mantenerlas siempre actualizadas</strong> para que la información que obtengamos del resto de
+          operaciones sea fiable.
+        </p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image8.png" />Despieces</strong> 🡪 se muestran las
+          diferentes piezas que componen un artículo, indispensable para realizar correctamente los pedidos de venta, o
+          gestionar el servicio postventa de la empresa según los recambios o repuestos que tengamos en existencias.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image9.png" />EDI </strong>🡪 Desde esta sección, se
+          gestionan los pedidos que nos llegan desde la plataforma de EDI, en nuestro caso, nuestro proveedor de este
+          servicio es EdiVersa. En la entrada de Plataforma, es donde podremos recibir los pedidos que nos mandan
+          nuestros clientes cada día y desde la bandeja de salida, se muestra la información que les enviamos (respuesta
+          de pedidos, de albaranes, facturas, etc…)</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image10.png" /></p>
+        <p><strong>Empresas</strong> 🡪 gestión de nuestros clientes.</p>
+        <p>Desde esta sección, podemos crear clientes nuevos, modificarlos o realizar determinados cambios en su ficha
+          de cliente.</p>
+        <p>Desde agrupaciones, podemos añadir los clientes que pertenecerán a un grupo determinado, donde se aplicarán
+          unas mismas características de envío, facturación o comisiones.</p>
+        <p>La opción Datos cliente – articulo, permite relacionar cada artículo con un cliente y de esta manera
+          personalizar: tarifa, código propio que le da nuestro cliente o incluso un nombre diferente al que nosotros
+          tengamos en nuestra base de datos.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image11.png" />Presupuestaria</strong> 🡪 confección de
+          presupuestos a medida para nuestros clientes.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image12.png" /></p>
+        <p><strong>Producción</strong> 🡪 Gestión de las órdenes de trabajo y los procesos determinados en las líneas
+          donde se producen los artículos. Se guarda la trazabilidad del producto y permite gestionar el personal que
+          trabaja en esta área, así como las órdenes que llevan a cabo.</p>
+        <p> </p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image13.png" />Táctil </strong>🡪 sección pensada para los
+          operarios que manejan pda o determinados dispositivos electrónicos y con un aspecto más visual pueden realizar
+          sus operaciones en almacén.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image14.png" /></p>
+        <p><strong>Ventas</strong> 🡪 Y, por último, diríamos que unos de los módulos más importantes, porque nos
+          permite la gestión de los pedidos, albaranes y facturas de ventas de la empresa.</p>
+        <p>Se gestiona desde aquí los descuentos, rapeles o precios especiales.</p>
+        <p>A nivel operativo, también se gestionan las <strong>expediciones</strong> que posteriormente se trabajarán
+          desde almacén para enviar la mercancía a nuestros clientes.</p>
+        <p>Esta es la vista general del programa, pero entraremos en detalle más adelante para conocer la forma más
+          eficiente de trabajar con el programa de gestión de prologic.</p>
+        <h4><a id="_Toc235107827"></a>Botones</h4>
+        <p>En la parte superior, tenemos activo por defecto, una serie de herramientas que incorporan funciones
+          necesarias para el manejo de determinadas secciones.</p>
+        <p>Empecemos con la barra de herramientas general que permite configurar el resto.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image15.png" /></p>
+        <p><strong>Sesión</strong> 🡪 relacionado directamente con el inicio del trabajo con nuestro usuario y
+          contraseña, permite cerrar la sesión y cambiar de usuario.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image16.png" />Desde mi perfil vemos con qué usuario estamos
+          conectado y nuestros datos de inicio de sesión, así como nuestro correo de empresa.</p>
+        <p>Tenemos la posibilidad de salir completamente del programa, mediante la opción Salir o bien de Suspender, lo
+          que permite que las secciones o pestañas que tengamos abiertas se mantengan hasta que volvemos a introducir
+          nuestra contraseña para volver en el mismo sitio donde lo habíamos dejado. De esta manera el programa se queda
+          bloqueado para que nadie pueda manejarlo mientras no estamos, pero no tenemos que empezar de cero nuestro
+          trabajo.</p>
+        <p>A partir de la opción <strong>Edición</strong>, vemos que las opciones son dinámicas, es decir, en función de
+          la pestaña o sección en la que estamos, aparecerá una información determinada, útil para esa pantalla en
+          particular y si cambiamos de sección, y vamos a Edición, tendrá alguna opción diferente a las anteriores.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image17.png" />Se compone básicamente, de lo que podemos usar y
+          llamamos comúnmente como atajos de teclado, para realizar las operaciones habituales en campos de escritura.
+        </p>
+        <p>Opciones como Insertar línea o Configurar columnas, también las podemos obtener en determinadas ventanas
+          pulsando el botón derecho del ratón.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image18.png" />Ver</strong> 🡪 nos permite configurar el
+          aspecto que tendrá nuestra área de trabajo. Podemos permitir que aparezca o desaparezca el menú lateral donde
+          tenemos el acceso a los programas, o ver información dinámica que aparecerá en la parte inferior de la
+          pantalla. </p>
+        <p>Así mismo, en este apartado, podemos elegir las barras de herramientas que queremos que aparezcan en la parte
+          superior, podemos elegir entre las siguientes opciones que nos muestra en la barra de herramientas del menú
+          principal. Podemos marcar algunas más específicas para realizar tareas concretas.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image19.png" />en este caso, tendríamos marcadas tanto las generales
+          como las específicas, donde se muestran más detalles relacionados con la empresa o el almacén con el que
+          queremos trabajar. </p>
+        <p>Importante: si trabajamos con varias empresas como es el caso (JATA, DECA y Portugal) siempre asegurémonos de
+          estar en la empresa adecuada para el trabajo que vamos a realizar, porque cualquier cambio o proceso que
+          hagamos en una, <strong>no se copia automáticamente en la siguiente.</strong></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image20.png" /></p>
+        <p>Desde ahí mismo podemos cambiar de empresa.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image21.png" /></p>
+        <p>Importante: Si cambiamos de empresa por este medio, las ventanas que tengamos abiertas se cerrarán y cuando
+          volvamos a entrar en la empresa anterior, tendremos que empezar de cero de nuevo.</p>
+        <p>Alternativa: podemos abrir dos veces el programa de gestión de prologic así podemos trabajar en una sesión
+          con JATA y en otra con DECA, por ejemplo.</p>
+        <p>Desde esta opción de Herramientas, tenemos la posibilidad de ocultar el panel inferior, de manera que, para
+          ver la información en detalle de pedidos, o cliente, tendríamos que pulsar doble clic en las línea de pedido.
+          Este panel inferior, es como una vista previa de la información que contiene esa línea. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image22.png" /></p>
+        <p>También podemos cambiar el aspecto de los paneles de trabajo, en lugar de estar una debajo del otro, podemos
+          cambiar a mostrar los detalles en vertical. Si marcamos Detalles en Horizontal, la pantalla aparecerá dividida
+          en sentido vertical para trabajar con otra perspectiva de los detalles de la sección.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image23.png" /></p>
+        <p>La opción de Ventana permite cerrar todas las ventanas que tengamos abiertas en la sesión e ir cambiando de
+          una a otra como lo haríamos pulsando directamente en cualquiera de las pestañas abiertas</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image24.png" />Con esta ayuda de Prologic, podemos ver un pequeño
+          manual de la pantalla en la que estamos trabajando. El usuario y contraseña son Logical – Prologic.</p>
+        <p>Acerca de Prologic 🡪 nos indica la versión con la que estamos trabajando y debemos intentar (IT) que se
+          trabaje con la última versión disponible.</p>
+        <p>Soporte técnico 🡪 nos permite descargar una aplicación para solicitar ayuda de parte del soporte técnico de
+          Prologic. Aparecen los correos de contacto, así como el teléfono de las oficinas centrales para contactar por
+          ayuda.</p>
+        <h4><a id="_Toc235107828"></a>Como crear botones personalizados</h4>
+        <p>Podemos hacer que las funciones implementadas en el programa, las tengamos como botones para acceder de una
+          forma más rápido a la ejecución. Se han diseñado multitud de ejecutables para realizar diferentes operaciones,
+          en pedidos y albaranes principalmente.</p>
+        <p>Por ejemplo, tenemos el botón que ejecuta la operación <strong>Importar Amazon, </strong>este sirve para
+          integrar todos los pedidos de Amazon Dropship.</p>
+        <p>¿Como podemos visualizarlo en la cabecera? Entramos en Ventas 🡪 Pedidos y nos situamos en la parte de la
+          cabecera donde no tenemos ni botones ni menús. Pulsamos botón derecho y aparecen estas opciones.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image25.png" /></p>
+        <p>Elegimos la última opción de <strong>Customize</strong>… (Personalizar), pulsamos en la segunda pestaña
+          (<strong>Commands</strong>) y nos situamos en <strong>All Commands</strong>:</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image26.png" /></p>
+        <p>Elegimos la opción que queremos integrar como botón y lo arrastramos hacia el fondo posicionándolo junto a
+          otro botón de los que tenemos activos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image27.png" />Cuando se aproxima, aparece algo semejante a este
+          cursor negro que tenemos en la imagen, soltamos y se convierte en <img
+            src="Prologic Grupo JATA v2.0_files/image28.png" />. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image29.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image30.png" />Pulsamos sobre este icono, botón derecho, y elegimos
+          Image and Text. Así se convierte en un botón para usar dentro de la pantalla elegida.</p>
+        <p>Por ejemplo, </p>
+        <p>Cerramos la ventana anterior. (Close)</p>
+        <h4><a id="_Toc235107829"></a>Filtros</h4>
+        <p>Un aspecto que destacar del trabajo diario con Prologic son los filtros tan útiles en cada una de las
+          pantallas.</p>
+        <p>MUY IMPORTANTE: Fijarse siempre en los filtros que utilizamos en la parte superior, porque la información
+          cambiará totalmente.</p>
+        <p>Pongamos un ejemplo utilizando la sección de pedidos. Esta es la vista general.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image31.png" /></p>
+        <p>Vamos a ir destacando las partes más relevantes a la hora de realizar esta tarea. Estos podríamos llamarlos
+          <strong>filtros estáticos</strong>, mientras que los que vemos más abajo resaltados en amarillo, serían
+          <strong>filtros dinámicos</strong>.
+        </p>
+        <p>Para usar los filtros estáticos, elegimos el campo por el que buscar y pulsaremos <strong>F5 o el botón
+            Actualizar.</strong></p>
+        <p><strong>Es importante determinar lo que vamos a querer filtrar en cada momento, porque el filtro dinámico
+            tiene que mover mayor cantidad de información y puede que el tiempo de espera sea más alto que para el
+            filtro estático de la cabecera. Siempre que sea posible, convendrá buscar por el filtro estático.</strong>
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image32.png" /></p>
+        <p>En la parte izquierda de los filtros, tenemos:</p>
+        <p><strong>Año</strong>: indicamos el año de búsqueda.</p>
+        <p><strong>Serie</strong>: depende la serie de pedidos con los que trabajamos, puede ser muy útil para ver
+          solamente los pedidos de los que nos encargamos diariamente.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image33.png" /></p>
+        <p>En este desplegable, se muestran todas las opciones de Serie. Si queremos elegir solamente una de ellas,
+          debemos hacer <strong>doble clic directamente sobre el nombre</strong>. Primero se desmarcará solo esta opción
+          y si volvemos a clicar dos veces, quedará marcado el check solo para esta opción.</p>
+        <p><strong>Código</strong>: ahí pondremos el número del pedido que tiene para el grupo JATA.</p>
+        <p>Su pedido: este es el número de pedido que le asigna el cliente, bien sea numérico o alfanumérico (Amazon).
+        </p>
+        <p><strong>Cliente</strong>: podemos escribir directamente en el espacio en blanco para que se autocomplete el
+          nombre del cliente buscado, o podemos pulsar en la lupa para que se muestre un listado de todos los clientes
+          posibles.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image34.png" /></p>
+        <p>En la parte derecha encontramos opciones de fechas y situaciones del pedido.</p>
+        <p>Si están bloqueado o no, o elegir dentro de las 13 diferentes situaciones en las que se puede encontrar un
+          pedido.</p>
+        <p>Muy importante si, por ejemplo, recibimos pedidos que directamente se han anulado por no tener mercancía en
+          stock, y dejamos este filtro de Situación en Pendiente, los anulados no saldrán. Pero en el caso de Amazon,
+          estarían pendientes de dar la respuesta de pedido.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image35.png" /></p>
+        <p>Por tanto, como norma general, nos interesa marcar en situación, Cualquier situación para visualizar
+          <strong>todos los pedidos</strong> de la fecha seleccionada.
+        </p>
+        <p>Las fechas de pedido, carga o entrega nos permite filtrar entre fechas para concretar la búsqueda.</p>
+        <p>Para activar cualquiera de los anteriores es preciso pulsar sobre <strong>F5 o al botón actualizar</strong>
+          de la parte superior.</p>
+        <p>Y en la parte inferior, dentro del área de trabajo propiamente dicho, encontramos otros subfiltros que
+          permiten, de forma dinámica, ir buscando la información que se autocomplete o bien muestra mediante un listado
+          desplegable, todas las opciones disponibles, sujetas a los filtros previos que hallamos puesto.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image36.png" /></p>
+        <p>No vamos a entrar en detalles de estos filtros dinámicos, porque podemos tener tantos como columnas queremos
+          que nos muestre la vista.</p>
+        <p>En este caso, podemos filtrar por fechas o bases imponibles, rentabilidades o faltas (pedidos incompletos),
+          bultos, etc…</p>
+        <p>Encontramos filtros tipo lista desplegable o tipo booleano (si o no), según se halla definido el dato
+          buscado. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image37.png" />Además, podemos ajustar el filtro para cada columna
+          en la parte izquierda de cada entrada.</p>
+        <p>A destacar en el programa de Prologic, la cantidad de filtros que podemos usar en cada una de las pantallas,
+          lo cual aporta versatilidad a la herramienta y un aspecto dinámico en cada una de las búsquedas que hagamos de
+          información.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image38.png" />En la parte izquierda de la barra de filtros,
+          encontramos la opción para <strong>quitar todos los filtros</strong> aplicados hasta ese momento. </p>
+        <h4><a id="_Toc235107830"></a>Vistas</h4>
+        <p>Para determinar la información que queremos presentar en pantalla, tenemos unas vistas que se pueden
+          configurar y personalizar al 100% para cada puesto de trabajo y cada departamento.</p>
+        <p>Vamos a realizar varios ejemplos de vistas muy diferentes dentro de una misma pantalla. Primero veremos las
+          <strong>Vistas de cabecera.</strong>
+        </p>
+        <p>Entramos en Ventas 🡪 Pedidos. En la primera pantalla aparece el espacio de resultados vacío, hasta que
+          pulsemos sobre F5 o Actualizar para cargar los datos según los filtros que tengamos en la parte superior.
+          Generalmente, están sin fecha de pedido, ni de carga ni de entrega, por lo que la búsqueda puede ser más
+          extensa y tardar más tiempo en buscar los resultados que precisamos.</p>
+        <p>Por otro lado, como vemos en los títulos de los campos que aparecen:</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image39.png" /><img
+            src="Prologic Grupo JATA v2.0_files/image40.png" /></p>
+        <p>Algo parecido a lo anterior. Pero quizás no necesitemos ni el peso, ni la fecha de entrega o la situación,
+          pero deseamos que se muestren otros campos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image41.png" />Si queremos quitar información de la tabla, tenemos
+          que situarnos en el título, en este caso, por ejemplo, vamos a quitar la columna de Peso Total, pulsamos sobre
+          ella con el botón derecho y una vez seleccionada, la eliminamos, arrastrándola fuera de la tabla.</p>
+        <p>Si queremos añadir más columnas a nuestra tabla, podemos hacerlo de varias formas. Pulsamos con el botón
+          derecho en cualquier lugar de la tabla, y seleccionamos Vista 🡪 Configurar Columnas.</p>
+        <p>Una vez dentro de la opción, podemos buscar por el nombre del campo, si lo conocemos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image42.png" /></p>
+        <p>Si por ejemplo, necesitamos añadir de nuevo el campo Peso Total, lo podemos buscar en la parte superior. Otra
+          opción es pulsar sobre cualquier opción del listado, y marcar la inicial de la palabra del campo que queremos
+          sacar, en este caso la P, y nos llevará al listado de opciones para buscar las palabras que comienzan con esta
+          inicial.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image43.png" /><img
+            src="Prologic Grupo JATA v2.0_files/image44.png" /></p>
+        <p>Así podemos ir buscando, en caso de no conocer exactamente el nombre del campo que queremos mostrar.</p>
+        <p>Para el departamento de administración comercial del grupo JATA se ha creado tres vistas personalizadas.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image45.png" />Destacaremos la de AMAZON. En este caso, relacionado
+          con los pedidos de Online, porque marca como en Estado pendiente aquellos que están sin tratar.</p>
+        <p>Además, en este filtro se han añadido:</p>
+        <p>·<strong> Bultos</strong>: Si es Online generalmente será 1, por tanto, más fácil para filtrar.</p>
+        <p>· <strong>Faltas</strong>: Si no hay mercancía para servir un pedido, aparecerá este campo con el valor 1.
+        </p>
+        <p><strong>· Artículo</strong>: para poder agrupar si queremos servir de un mismo artículo y no sabemos si
+          tenemos stock suficiente</p>
+        <p>En la sección de Existencias, aparece el stock que se trae actualizado al momento de Spyro, por tanto, es
+          real en base al almacén actual.</p>
+        <p><strong>· Uds. pedidas</strong>: se muestra el total de unidades pedidas, según los pedidos que han entrado
+          en ese día.</p>
+        <p> MUY IMPORTANTE: se nos mostrará la información según el filtro superior, en este caso, estamos filtrando por
+          el día actual, pero si filtramos por días anteriores, etc… el resultado variará y puede dar lugar a equívocos.
+        </p>
+        <p>· <strong>TU</strong>: las existencias reales del almacén de TU en Spyro.</p>
+        <p>· <strong>RAM</strong>: las existencias reales del almacén RAM en Spyro.</p>
+        <p>· <strong>Otros</strong>: las existencias reales de los almacenes en Spyro que no sean ni TU ni RAM.</p>
+        <p><strong>Disponible</strong>: el tipo de campo es booleano, es decir, aparecerá Si o No.</p>
+        <p>Ejemplo real de pedidos de Amazon Online:</p>
+        <p>Vamos a ver los campos en dos partes para analizarlo mejor.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image46.png" />En el campo Bultos se marcarán para el almacén como
+          está distribuida la mercancía, pero en este caso, si filtramos por 1 también podemos unificar los pedidos
+          Online. Y en faltas, podemos ver las líneas que no están completas, porque falta algún artículo del pedido.
+        </p>
+        <p>En la siguiente parte de la vista, vemos que podemos agrupar por <strong>Artículo</strong>, y el campo
+          <strong>Ud. Pedidas</strong> permite ver las unidades se han pedido de cada referencia.
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image47.png" /></p>
+        <p>Se muestran las existencias reales del almacén de <strong>TU</strong> o de <strong>RAM</strong> para hacer el
+          movimiento entre almacenes, o si fuera necesario desde <strong>Otros </strong>(aquellos que no son ni TU ni
+          RAM). Se muestra si el producto está disponible o no. Si filtramos por este campo, rápidamente sabemos que
+          pedido no se puede servir.</p>
+        <p>En el caso de Plataformas de Amazon, el filtro de bultos nos indicará si tiene picos, porque no se ha
+          realizado el pedido conforme a la unidad de embalaje.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image48.png" /></p>
+        <p>Si filtramos por Contiene 🡪 Picos rápidamente obtenemos todos los pedidos que tienen estas características
+          para poder solucionarlo.</p>
+        <p>Si no se puede bajar a una unidad de embalaje inferior a la pedida, se anula la línea.</p>
+        <p>Esto lo hacemos de la siguiente forma.</p>
+        <ul>
+          <li>Seleccionamos el pedido.Elegimos las líneas que como vemos más abajo, no tienen un número entero en los
+            embalajes y no se pueden suministrar con la unidad mínima.Herramientas 🡪 Anular línea.</li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image49.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image50.png" />El resultado sería este:</p>
+        <p>Cuando se manda la respuesta de pedido, estas dos líneas, la 1 y la 4 aparecerán con el código necesario (7)
+          para que Amazon entienda que estos productos no se les van a servir en este pedido.</p>
+        <p>Analicemos ahora las <strong>Vistas del detalle.</strong></p>
+        <p>Por ejemplo, en un pedido, las tenemos en la parte inferior donde se informa de las líneas que contiene ese
+          pedido.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image51.png" /></p>
+        <p>Podemos configurar las vistas, según los campos que queramos que se muestren y si queremos que sean
+          tabulables o no, es decir que se pueda recorrer en la línea o solo mostrar la información sin poder realizar
+          modificaciones.</p>
+        <h2><a id="_Toc235107831"></a>PEDIDO DE AMAZON DECA</h2>
+        <h4><a id="_Toc235107832"></a>Integración de pedidos.</h4>
+        <h5>Dropship</h5>
+        <ul>
+          <li>De momento tenemos una carpeta concreta en la ruta G:\P17. Gestión de las TIC\5-Programas
+            SPYRO\PROLOGIC\AMAZON\DECA\AMZON donde se guardará el archivo descargado desde la plataforma de Amazon. El
+            nombre del archivo a integrar será <strong>amazon-orders-Jata Hogar(JA7FG)</strong>.csv Desde Ventas --
+            Pedidos</li>
+            <a href="https://logicalriojasl-my.sharepoint.com/:v:/g/personal/josemaria_tejero_logicalrioja_com/IQDjfwCOwTZqQaZ-njIG_-_6AXCu9zh07tr0Js9efBofN3Q?e=1BuvIr"target="_blank">
+              Ver video
+            </a>
+            </a>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image52.png" /></p>
+        <p>Encontramos en la parte superior el botón de Importar AMAZON. Al pulsar, integra la Excel que hemos dejado en
+          la carpeta indicada.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image53.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image54.png" /></p>
+        <p>Veremos los pedidos integrados, actualizando en la pantalla de Ventas – Pedidos y filtrando por el día de
+          pedidos integrados.</p>
+        <p>Tenemos una vista especial para estos pedidos, AMAZON</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image55.png" /></p>
+        <p>Y se muestran detalles importantes para tomar decisiones y filtrar según la información que necesitemos ver
+          en cada momento.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image56.png" /></p>
+        <p>Además de las columnas habituales de Código (pedido), Fecha de petición, Fecha de entrega, Centro, ahora
+          tenemos:</p>
+        <p>· <strong>Bultos</strong> (si es 1 será generalmente Dropship), </p>
+        <p>· <strong>Faltas</strong> (si está a 1 es que falta mercancía en ese pedido).</p>
+        <p>· <strong>Artículo</strong> (se pueden agrupar en la parte superior o filtrar, Estado (pendiente) </p>
+        <h5><a id="Anular"></a>Vendor<a id="Pedidos"></a></h5>
+        <a href="https://logicalriojasl-my.sharepoint.com/:v:/g/personal/josemaria_tejero_logicalrioja_com/IQBQZ7HYmAvXQ6ao8N9nmJlUAQOv4ErxlXvmwkWDRHa0GGE?e=GIBOXY" target="_blank">
+          Ver video
+        </a>          
+        <p>Para integrar los pedidos de Amazon Vendor (así como los de cualquier cliente que envíe sus pedidos por EDI)
+          tenemos que entrar en EDI 🡪 Plataforma 🡪 pestaña Entradas</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image57.png" /></p>
+        <p>Seleccionamos uno o varios pedidos y pulsamos en Herramientas 🡪 Capturar pedidos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image58.png" /></p>
+        <p>Si solamente queremos integrar uno o algunos de ellos, los seleccionamos y sobre la selección, botón derecho,
+          Capturar pedidos. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image59.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image60.png" />Cuando se realiza el proceso, determina diferencias
+          en los precios y nos ofrece la posibilidad de cambiarlos, así como ver las líneas que entran anuladas por
+          falta de stock. Este es un ejemplo de la vista de los pedidos:</p>
+        <p>Desde esta pantalla, se pueden realizar cambios en los precios, si nos interesa, para dejarlo en el pedido
+          como indica en este caso Amazon, o bien mantener la tarifa actual. En el primer pedido podemos ver que las
+          líneas están en otro color, es porque, como se puede ver, el precio tarifa es diferente del precio que viene
+          por EDI, para que se mantengan los precios que vienen por EDI, marcamos el check “Marcado” (como se ve en la
+          imagen) y el pedido se cargará con los precios que vienen de EDI.</p>
+          <a href="https://logicalriojasl-my.sharepoint.com/:v:/g/personal/josemaria_tejero_logicalrioja_com/IQB0xMccKFFhSIEcf4wD82uOAYDGGIGa-4luAj7OAqXdPhE?e=5E1NVV" target="_blank">
+            Ver video
+          </a>
+        <p>Una vez integrado el pedido, se puede ver en la pantalla de Ventas 🡪 Pedidos, filtrando por el día de
+          integración.</p>
+        <p>También podemos observar dos líneas en color morado, esto es que no tenemos existencias suficientes ni en TU
+          ni en RAM.</p>
+        <p>Luego accedemos a Ventas 🡪 Pedidos y desde ahí podemos realizar las gestiones.</p>
+        <p>Filtramos por fecha si queremos los del día (hoy), o por alguna fecha seleccionada. También podemos ir
+          variando los filtros para marcar determinados estados de los pedidos.</p>
+        <p>Tenemos una vista creada especialmente para los pedidos de Amazon, se incluyen aspectos como:</p>
+        <ul>
+          <li> Las existencias de los almacenes de donde va a recoger la mercancía (TU, RAM u OTROS) La columna faltas,
+            nos indica los pedidos que no tienen disponible (1 no disponible) Especialmente para Amazon Online.el estado
+            del pedido (Enviado o Pendiente)Las Ud. Pedidas de un determinado artículo para poder agrupar en la vista.
+          </li>
+        </ul>
+        <p>Podemos agrupar por campos, si pulsamos botón derecho sobre el campo, elegimos Vista 🡪 Agrupar.</p>
+        <p>Si son de Amazon Online (3316-3) en este caso, solo tendremos que validar el pedido, si hay existencias o
+          sino las tenemos en nuestros almacenes, realizar el cambio desde otros, si es que se quiere servir ese pedido.
+        </p>
+        <p>Si queremos bloquear pedido, esperando a recibir la mercancía o por otro motivo, lo hacemos desde
+          Herramientas 🡪 Bloquear pedido.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image61.png" /></p>
+        <p>aquí es donde indicaremos el motivo del bloqueo y se indica la fecha para consultar más adelante si fuera
+          necesario.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image62.png" /></p>
+        <p>Aparecerá la línea marcada en naranja para indicarnos el bloqueo.</p>
+        <p>Si queremos desbloquear llegado el momento, podemos hacerlo desde Herramientas 🡪 Desbloquear pedidos. (se
+          explica más adelante el proceso completo)</p>
+        <h4><a id="_Toc235107833"></a>Aceptar pedidos de Amazon</h4>
+        <p>Para aceptar los <strong>pedidos de plataforma</strong> de Amazon:</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image63.png" />Seleccionamos uno o varios pedidos </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image64.png" /></p>
+        <p>y pulsamos Herramientas 🡪 Aceptar pedido (selección) como aparece en la imagen. </p>
+        <p>En la parte inferior derecha, cambiará el estado a </p>
+        <p>Aceptado.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image65.png" /></p>
+        <p>El que se marque como <strong>Aceptado</strong>, no significa que se va a servir la mercancía, sino que se ha
+          gestionado la respuesta a Amazon con la información necesaria. Le estamos dando la respuesta como que tenemos
+          el pedido, y tras su gestión, se envía por EDI el resultado para cada línea. (Aún faltaría enviarlo)</p>
+        <p>MUY IMPORTANTE: Pulsar en Guardar o F2. </p>
+        <p>Para visualizar el envío y confirmarlo, tenemos que acceder a la pestaña de <strong>EDI </strong>🡪
+          <strong>Plataformas</strong> (pestaña Salidas) veremos que está aceptado el pedido, pendiente de enviar.
+          <strong>(Estado EDI: Sin enviar) </strong>
+        </p>
+        <p><strong>Tenemos que tener en cuenta que la fecha de la respuesta de pedido, será la misma que la fecha de
+            carga que tenemos en el pedido. Es importante esto, porque para pedidos de volumen, puede ser que tengamos
+            que esperar hasta más de 1 mes para hacer la respuesta de pedido, llegado el momento nos aparecerá en la
+            pantalla como Sin enviar.</strong></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image66.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image67.png" />Si queremos enviar este pedido o varios como
+          respuesta a Amazon, seleccionamos el/los pedido/s para enviar y pulsamos botón derecho. Elegimos enviar
+          documentos (si queremos enviar todos) o Enviar selección (solo los que hayamos elegido previamente)</p>
+        <p>Con esto habríamos acabado la respuesta de pedido.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image68.png" /></p>
+        <p>Si tenemos los documentos en estado <strong>Sin enviar</strong> es cuando podemos hacer cambios en el pedido.
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image69.png" />Para ello desde el pedido, volvemos a la opción
+          <strong>Pendiente de enviar </strong>(inferior derecha). Podemos hacer cualquier cambio, y una vez que
+          elijamos de nuevo <strong>Aceptado</strong> volverá a enviar los cambios a EDI.
+        </p>
+        <h4><a id="_Toc235107834"></a>Como sabemos los pedidos que tenemos pendientes.</h4>
+        <p>En la parte superior derecha de la cabecera, encontramos el filtro de Situación. Por defecto aparecen los
+          pedidos pendientes. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image70.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image71.png" />Cuando el pedido se ha gestionado, y se ha dado
+          respuesta de pedido (Amazon), aparece en la parte inferior como <strong>Aceptado</strong>. </p>
+        <p><strong><em>Por tanto, con este filtro en Pendientes siempre sabremos los que nos quedan por
+              gestionar.</em></strong></p>
+        <p>Si elegimos la opción en Albarán, ya veremos todos los gestionados.</p>
+        <p>Existe diferentes estados de pedido, donde podemos ver por ejemplo:</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image72.png" /><strong>Expedición diseñada: </strong>cuando se ha
+          realizado el resumen<strong>.</strong></p>
+        <p><strong>Diseñando expedición:</strong> está en proceso de creación de resumen.</p>
+        <p><strong>Preparado</strong> en el almacén o si lo están <strong>Preparando,</strong> están en ese momento
+          haciendo lecturas con las PDA. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image73.png" />Tenemos las opciones de <strong>Sin entregar
+          </strong>y de <strong>cualquier situación</strong>, donde aparecerán todos sin filtros.</p>
+        <p>Dentro de los detalles del pedido, encontramos el albarán creado.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image74.png" /></p>
+        <p>Y podemos acceder directamente si pulsamos sobre el icono izquierdo.</p>
+        <p>Este es otro indicativo de que nuestro pedido está gestionado.</p>
+        <h4><a id="_Toc235107835"></a>Pasar los pedidos a albaranes </h4>
+        <p>Una vez tenemos realizada la respuesta de pedidos, vamos a albaranar.</p>
+        <p>Estamos en Ventas 🡪 Pedidos, elegimos el pedido o pedidos a albaranar y tenemos dos opciones:</p>
+        <ul>
+          <li>Desde el botón que tendremos en la parte superior de la ventana, que lleva como título <strong>GENERAR
+              ALBARANES</strong>.Botón derecho, Acciones 🡪 Ejecutar reglas 🡪 Generar Albaranes. Desde Herramientas 🡪
+            Ejecutar reglas 🡪 Generar albaranes.<img src="Prologic Grupo JATA v2.0_files/image75.png" />En todos los
+            casos aparecerá esta opción.</li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image76.png" /></p>
+        <p>Desde aquí podemos hacer que un albarán contenga varios pedidos, mediante la opción <strong>Pedidos
+            Agrupados</strong> cuando hemos seleccionado más de uno.</p>
+        <p>Por otro lado, podemos tener un albarán creado en otro momento anterior, que contenga uno o varios pedidos y
+          queremos añadir el nuevo pedido a ese albarán existente. En ese caso seleccionamos <strong>Buscar
+            albarán</strong> donde podemos indicar el número de albarán al que queremos añadir el nuevo pedido.</p>
+        <p>Si seleccionamos la primera opción, realizará la unión de pedidos, y posteriormente desde cualquiera de ellos
+          podemos ver el albarán al que pertenecen desde la vista en detalle del pedido. Esto es la parte inferior de la
+          ventana donde tenemos abierto el pedido (justo en la parte de la cabecera del pedido, encima de las líneas de
+          artículos)</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image77.png" /></p>
+        <p>En nuestro caso, este pedido pertenece al albarán 153646.</p>
+        <p>Si queremos entrar en el albarán, directamente podemos hacer doble clic sobre él.</p>
+        <p>Si hubiéramos elegido la opción de agrupar pedidos en un mismo albarán, también aparece definido en esta
+          misma cabecera dentro del albarán los pedidos que contiene.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image78.png" /></p>
+        <p>Si queremos gestionar los albaranes, vamos a Ventas 🡪 Albaranes</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image79.png" /></p>
+        <p>Podemos buscar directamente un albarán concreto con los filtros superiores o por fechas en la parte superior
+          derecha.</p>
+        <p>En este ejemplo, buscamos desde el filtro </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image80.png" /></p>
+        <p>Y seleccionamos la serie de albarán AL que es el que pertenece a los albaranes de DECA.</p>
+        <p>La serie A (DECA) está preparada para las gestiones desde el almacén. Este albarán contiene líneas de pedidos
+          con sus SSCC para las etiquetas.</p>
+        <p>Desde nuestro albarán podemos realizar la respuesta de albarán para AMAZON.</p>
+        <p>Lo hacemos desde Herramientas 🡪 Comunicar EDI.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image81.png" /></p>
+        <p>Quedaría en la carpeta de EDI 🡪 Plataformas en la pestaña de Salidas, pendiente de enviar.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image82.png" /></p>
+        <p>Algo interesante, es que desde la misma pantalla podemos ver la respuesta de pedido y la respuesta de
+          albarán, si filtramos por los datos correctos.</p>
+        <p>En este caso, el pedido tiene el mismo número que el albarán, y de esta manera tenemos la trazabilidad
+          completa desde el inicio.</p>
+        <p>Seleccionamos los albaranes a enviar, botón derecho, Enviar documentos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image83.png" /></p>
+        <p>Una vez enviado, podemos ir a la página de Amazon para conseguir el ASN y pegarlo en la parte que corresponde
+          a la agencia.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image84.png" />Lo podemos encontrar en Ventas 🡪 Albaranes y
+          secundarios. Pegamos en Su Albarán.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image85.png" /></p>
+        <p>Es ahí en las <strong>Observaciones de portes</strong> donde podemos pegar el ASN que aparecerá en las
+          etiquetas que se mandarán a la agencia e irán pegadas en la mercancía.</p>
+        <p><strong>NOTA: Se está trabajando para que el ASN se pueda asignar automáticamente al albarán mediante una
+            API.</strong></p>
+        <p>Ahora tenemos que marcar el albarán como <strong>Activo</strong> para que lo vean en almacén.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image86.png" />Para esto, vamos a la pestaña <strong>Estado</strong>
+          que aparece en el detalle del albarán.</p>
+        <p>Para los pedidos de Dropship, como se indicó desde el departamento de administración comercial, todos los
+          pedidos pasarán automáticamente a albarán en estado <strong>Activo.</strong></p>
+        <p> </p>
+        <h4><a id="_Toc235107836"></a>Movimientos de almacén</h4>
+        <p>Quizás no tengamos en el almacén de TU o RAM la mercancía a servir y necesitamos coger de otros almacenes.
+        </p>
+        <p>Para ello, debemos realizar movimientos de almacén manuales. Para ello vamos a Almacén 🡪 Movimientos
+          manuales</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image87.png" /><img
+            src="Prologic Grupo JATA v2.0_files/image88.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image89.png" />Para añadir un movimiento manual de almacén, debemos
+          ir a Nuevo de la parte superior. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image90.png" />Si la mercancía no estaba en ningún almacén
+          anteriormente, y ahora se tiene constancia de determinadas unidades para venta, podemos dejar la primera parte
+          de Origen, sin delegación. Y añadir solamente en la parte de Destino a donde queremos que vaya esta mercancía.
+        </p>
+        <p>Generalmente, la opción más habitual será pasar de una almacén con existencias a otro sin ellas. Por ejemplo,
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image91.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image92.png" />Y en la parte inferior introducimos el artículo que
+          vamos a mover de almacén y sus cantidades.</p>
+        <p><strong>No olvidemos Guardar los cambios o F2.</strong></p>
+        <h2><a id="_Toc235107837"></a>PEDIDOS DE COMPRAS</h2>
+        <h4>Creación de pedidos de compras</h4>
+        <p><img src="Prologic Grupo JATA v2.0_files/image93.png" />Tenemos en el panel izquierdo la entrada en
+          <strong>Programas</strong>, si desplegamos, elegimos <strong>Compras 🡪 Pedidos.</strong>
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image94.png" /><img
+            src="Prologic Grupo JATA v2.0_files/image95.png" />Para comenzar un nuevo pedido pulsamos en la barra de
+          herramientas superior sobre y dentro de los detalles del pedido (parte inferior), elegimos primero de todo, la
+          serie del pedido, generalmente JHPCI.</p>
+        <p>Como puede suceder que no sepamos el proveedor del artículo, tenemos la posibilidad de empezar con el 000000
+          (Proveedor provisional). En el momento que pongamos un artículo en la línea del pedido, se asociará con su
+          proveedor y se cambiará en la cabecera del pedido.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image96.png" />Ejemplo: hemos introducido en la línea de pedido el
+          artículo BC3 y se ha relacionado con el proveedor,</p>
+        <p>que tenemos previamente en la base de datos del artículo (340100 – NINGBO GOLDEN…)</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image97.png" /></p>
+        <p>Se completa además con su forma de pago, su tarifa y con las anotaciones que tenemos para este proveedor en
+          relación a este producto.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image98.png" />Para poder cumplimentar estos campos lo podemos hacer
+          en la pestaña PRECIOS del detalle del artículo. Ejemplo de BC3.</p>
+        <p>Esa información aparecerá en la pantalla principal de pedidos de compras, con la vista COMPRAS</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image99.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image100.png" />A continuación, vamos a detallar lo que tenemos que
+          completar dentro de cada una de las pestañas del detalle del pedido.</p>
+        <ul>
+          <li><strong>Documentos</strong>: este espacio lo tenemos reservado para adjuntar todo tipo de información
+            relacionada con el pedido, pdf, correos recibidos o enviados, listado de precios…<strong>Datos
+              adicionales</strong>: <strong>Cantidad</strong>: Donde podemos introducir las diferentes cantidades de los
+            artículos incluidos en el pedido. Este campo fue solicitado por el departamento de Compras, para poder
+            combinar las cantidades de varios contenedores y tener la información en la vista de Compras, simulando una
+            Excel. Ejemplo:</li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image101.png" /></p>
+        <p>Aquí vemos, en la cabecera donde aparecen los 3 pedidos de estas 3 referencias, y en la pestaña de Datos
+          adicionales es donde en realidad introducimos estos datos, incluidos los modelos diferentes o iguales que
+          vendrán en esa compra.</p>
+        <ul>
+          <li><img src="Prologic Grupo JATA v2.0_files/image102.png" />Embarque:Se introducirán los datos del BL, si es
+            agrupado o no, el nombre del barco y toda la información relacionada con las <strong>fechas</strong> de
+            embarque en puerto de origen, cuando llegará a puerto nacional, llegada a Tudela, número de contenedores…
+          </li>
+        </ul>
+        <p>La pestaña LC es la que utilizará el departamento financiero, generalmente el responsable Financiero, para
+          elegir el banco y los diferentes créditos o seguros de cambio a utilizar para realizar la compra del producto.
+        </p>
+        <ul>
+          <li><img src="Prologic Grupo JATA v2.0_files/image103.png" /><img
+              src="Prologic Grupo JATA v2.0_files/image104.png" />Nota: se ha preparado esta gestión, para que llegado
+            el momento que el departamento de compras necesite estos datos de financiero, se genere una incidencia en la
+            orden de compras. Lo haremos de la siguiente manera: <img
+              src="Prologic Grupo JATA v2.0_files/image105.png" />Se marca la persona que lo tiene que atender, y
+            posteriormente, el responsable de finalizarlo.Tenemos la posibilidad de marcar las observaciones en la parte
+            inferior para detallar lo que necesitamos.</li>
+        </ul>
+        <p>Para ver la incidencia, la persona responsable de ella, debe entrar en <strong>Administración 🡪
+            incidencias.</strong> Elegir el responsable, en este caso de ejemplo responsable de financiero, y
+          Actualizar.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image106.png" /></p>
+        <p>Seleccionamos la línea que queramos gestionar, y en los detalles veremos lo siguiente: </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image107.png" />Desde aquí, tenemos que pulsar sobre el documento,
+          en este caso el E02-A2026… que es el pedido de compras con la incidencia. </p>
+        <p>Nos llevará al pedido de compras, y desde la pestaña LC la persona responsable, gestionará la información
+          solicitada.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image108.png" />Acabada la gestión, pulsamos en Guardar y al volver
+          a la incidencia, cambiamos el Estado a Solucionada (parte inferior derecha)</p>
+        <p>Actualizamos la persona responsable para que la vuelva a tener como Incidencia, pero esta vez en situación de
+          Solucionada.</p>
+        <p>De esta manera, podrá continuar con su trabajo al completar los campos que resten.</p>
+        <p>Faltaría por analizar la ultima pestaña de esta sección, que es <strong>Sanidad</strong>, preparada para que
+          posterior a la revisión de estos elementos, se puedan filtrar para determinar el trabajo pendiente.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image109.png" /></p>
+        <h4>Generar un pedido de ventas a partir de uno de compras. (pendiente Victor)Creación de albarán de compras
+        </h4>
+        <p><img src="Prologic Grupo JATA v2.0_files/image110.png" />Puede ser que tengamos como soporte el pedido, o
+          podemos generar un nuevo albarán sin necesidad de pedido.</p>
+        <p>Tenemos dos opciones para generar el albarán. En la parte superior, pulsamos sobre
+          <strong>Herramientas</strong> 🡪 <strong>A Albarán </strong>
+        </p>
+        <p>o pulsando en la parte derecha del detalle del pedido donde vemos el botón <img
+            src="Prologic Grupo JATA v2.0_files/image111.png" /></p>
+        <p>Aparece la siguiente pantalla, para definir la serie del albarán, fecha y fecha de entrega (tras reunión con
+          Compras, se decidió poner la misma)</p>
+        <ul>
+          <li><img src="Prologic Grupo JATA v2.0_files/image112.png" /></li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image113.png" />Como el albarán se va a crear tras recibir la
+          mercancía del proveedor en el almacén, vamos a poder introducir los datos correctos de lo que realmente hemos
+          recibido. </p>
+        <p>Primero podemos introducir las unidades recibidas. Y pueden darse dos casos:</p>
+        <ul>
+          <li>Que venga tal y como está el pedido, en cuyo caso solo tendremos que anotar las cantidades y pulsar <img
+              src="Prologic Grupo JATA v2.0_files/image114.png" />Que no llegue todas las unidades pedidas y ya pagadas.
+            En ese caso, tenemos que </li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image115.png" /></p>
+        <h4><a id="_Toc235107838"></a>BLOQUEO DE PEDIDOS</h4>
+        <p>Cuando se integran los pedidos, puede ser que aparezca marcado con una línea en naranja, lo que indica que
+          ese pedido está bloqueado.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image116.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image117.png" />Motivos del bloqueo: Lo podemos ver en la pestaña
+          Bloqueo accediendo al pedido. Pulsamos sobre el pedido coloreado, y de entre las pestañas que aparecen en la
+          parte inferior, tenemos bloqueo.</p>
+        <p>Generalmente, tendrá que ver con: </p>
+        <ul>
+          <li><strong><img src="Prologic Grupo JATA v2.0_files/image118.png" />Nombre del artículo</strong>, porque no
+            exista, está entrando con otro diferente al que tenemos registrado en nuestro programa o porque como en este
+            caso está desactivado el artículo. <img src="Prologic Grupo JATA v2.0_files/image119.png" />Si el bloqueo es
+            por el nombre del artículo, lo podemos desbloquear, desde Herramientas 🡪 Desbloquear pedido. </li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image120.png" />Nos pide confirmación para determinar que no lo
+          desbloqueamos por error.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image121.png" />Pulsamos en siguiente en ambas pantallas</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image122.png" />Y si queremos marcar la fecha y explicar en
+          observaciones porque desbloqueamos.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image123.png" />Una vez desbloqueado, podemos ir a la línea del
+          pedido y meter a mano el artículo que daba error, en este caso el MT8 que no estaba activo porque es el MT8E
+          el que tenemos dado de alta.</p>
+        <ul>
+          <li>Otra causa de bloqueo es que <strong>ya exista ese pedido</strong>. Lo que servirá para indicar el
+            duplicado, y por tanto bloquearlo, es el código del pedido de cliente. <img
+              src="Prologic Grupo JATA v2.0_files/image124.png" />Si el motivo es por duplicado, podemos seleccionar
+            todos los pedidos bloqueados y eliminar. Para agrupar todos tenemos el campo bloqueado, y en el filtro lo
+            marcaríamos para que aparecieran todos juntos para eliminar.</li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image125.png" /></p>
+        <ul>
+          <li><img src="Prologic Grupo JATA v2.0_files/image126.png" />y botón <img
+              src="Prologic Grupo JATA v2.0_files/image127.png" />de la parte superior.</li>
+        </ul>
+        <p>NOTA IMPORTANTE: Puede ser que tengamos bloqueados varios pedidos, y unos sean duplicados, pero otros sean
+          por motivo del nombre del artículo. Para determinar cuáles borrar y cuales no, podemos seleccionar todas las
+          filas de bloqueados, activando el campo en el filtro, <img
+            src="Prologic Grupo JATA v2.0_files/image128.png" /> y pasar uno a uno revisando el motivo, dejando activa
+          la pestaña <img src="Prologic Grupo JATA v2.0_files/image129.png" />.</p>
+        <h4><a id="_Toc235107839"></a>ERRORES AL INTEGRAR</h4>
+        <p>Cuando estamos en la pantalla de EDI 🡪 Plataformas 🡪 Entradas, vamos a poder capturar todos los pedidos que
+          se encuentren ahí. Ese proceso para obtener los pedidos de EDI es automático y no tenemos que hacer nada. </p>
+        <p>Cuando recibamos pedidos, generalmente en Estado, lo tendremos como Nuevo.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image130.png" />Si ese pedido ya se ha integrado, aparecerá como
+          Descargado, y ya nos indica que se ha gestionado previamente.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image131.png" />Si pulsamos en No,</p>
+        <p>Nos da opción de volverlo a descargar, pero se duplicaría en el programa, y luego lo marcaría como bloqueado
+          (naranja)</p>
+        <ul>
+          <li>No encuentra EAN artículo</li>
+        </ul>
+        <p>Puede darse el caso de no encontrar un artículo con el EAN que solicita el cliente. Faltaría darlo de alta en
+          nuestro sistema. Como primera opción, podríamos elegir otro artículo para integrar el pedido, con el cuidado
+          de cambiarlo inmediatamente nada más integrar o, cancelarla operación, dar de alta el artículo y volver a
+          integrar.</p>
+        <ul>
+          <li>No coinciden cantidades con embalajes</li>
+        </ul>
+        <p>Puede suceder que el cliente nos pide X unidades de un articulo que no coincide con el mínimo de 1 embalaje.
+          Tenemos la opción de redondear si es el caso, o marcar 0 para no servir esa línea. Saldrá algo así.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image132.png" /></p>
+        <ul>
+          <li>EAN DUPLICADO</li>
+        </ul>
+        <p><img src="Prologic Grupo JATA v2.0_files/image133.png" />Sucede cuando tenemos varios artículos en nuestra
+          base de datos que pueden corresponder con el que nos pide el cliente. Este debe ser un error excepcional,
+          porque en general, un EAN no lo deberían compartir nunca dos artículos. En este caso, nos ofrece la
+          posibilidad de elegir entre los disponibles.</p>
+        <p>Otro error al integrar podría ser que no tenga GLN asignado en el campo de Punto de entrega. (Esto es para IT
+          y se trata en el siguiente punto)</p>
+        <h4><a id="_Toc235107840"></a>INTEGRACIÓN DE PEDIDOS (ASPECTOS TÉCNICOS)</h4>
+        <p>A continuación, vamos a explicar desde donde se recogen los pedidos para integrarlos en Prologic.</p>
+        <p>Actualmente en el servidor tenemos unas carpetas destinadas a diferentes gestiones tanto de pedidos como de
+          albaranes y facturas.</p>
+        <p>Estos se encuentran en la siguiente ruta: <a
+            href="file:///\\192.168.200.29\e$\PrologicERP\DocumentosXML\TLR">\\192.168.200.29\E\PrologicERP\DocumentosXML\TLR</a>
+        </p>
+        <p>Y es en la carpeta de Documentos recibidos donde se depositarán todos los pedidos que recibamos de la
+          plataforma EDI.</p>
+        <p>Estos archivos tienen formato .xml y se integran directamente a nuestro sistema entrando en EDI 🡪
+          Plataformas y en la pestaña de Entrada.</p>
+        <p>Tenemos creado un ejecutable para la conversión del formato .edi a .xml por si en alguna ocasión recibimos de
+          otras fuentes esta información y la necesitamos convertir. (preguntar a Jose M)</p>
+        <p>Para gestionar el pedido ya se explicó en la parte que corresponde al departamento de administración
+          comercial. (<a href="#Pedidos">ir a gestión de pedidos</a>)</p>
+        <h4><a id="_Toc235107841"></a>CLIENTE NO TIENE GLN</h4>
+        <p><img src="Prologic Grupo JATA v2.0_files/image134.png" /></p>
+        <p>En este caso, vemos que una línea no reconoce el centro, en este momento, tenemos que entrar en Empresas 🡪
+          Empresas y seleccionar el cliente. En este caso Amazon. Podemos determinar de donde procede el pedido por el
+          GLN que acompaña en la línea, en este caso, 5450534020978 y en nuestro proveedor de EDI, buscaremos en la
+          libreta de direcciones.</p>
+        <p>El acceso a estos datos se hará mediante el programa comeDI, instalado en el servidor. En la opción
+          Parámetros 🡪 Interlocutores externos, tenemos los GLN de los clientes con los que se trabaja en la empresa.
+        </p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image135.png" /><img
+              src="Prologic Grupo JATA v2.0_files/image136.png" /></strong>Si volvemos al pedido que tenemos sin centro
+          asignado, podríamos solucionar el problema, si vamos a Empresas 🡪 Empresas, en este caso el cliente 3316 y
+          elegimos en la pestaña <strong>Cliente</strong> el centro (4088) AMAZON – SVQ1 DOS HERMANAS (porque en el
+          comeDI hemos visto que se refiere a este centro según el GLN 5450534020978)</p>
+        <p>En la pestaña GLN, pulsamos botón derecho en cualquiera de las líneas inferiores y elegimos Insertar línea en
+          Lista de EmpresaGLN.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image137.png" /></strong></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image138.png" />Marcamos punto de entrega</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image139.png" />Una vez completado con el dato correcto </p>
+        <p>Si volvemos a la pestaña de Plataforma y Actualizamos, veremos que el pedido ahora ya reconoce el centro de
+          donde procede. </p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image140.png" /></strong></p>
+        <h4><a id="_Toc235107842"></a>INCIDENCIA AL ACEPTAR PEDIDO</h4>
+        <p>Si intentamos realizar la respuesta del pedido y la situación no cambia a <strong>Aceptado</strong>, tenemos
+          que revisar lo siguiente. Es posible que sea un cliente nuevo, y necesite tener activa la opción <strong>Con
+            confirmación de pedidos</strong>, que encontramos en el cliente. Para ello vamos a Empresas 🡪 Empresas,
+          buscamos cliente y luego vamos a la pestaña de Cliente y bajamos a la opción de EDI. </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image141.png" /></p>
+        <p>Ahí elegimos</p>
+        <p>Con confirmación de pedidos.</p>
+        <p><strong><img src="Prologic Grupo JATA v2.0_files/image142.png" /></strong></p>
+        <h2><a id="_Toc235107843"></a>OFICINA DE ALMACÉN</h2>
+        <h4><a id="_Toc235107844"></a>Albaranes activos</h4>
+        <p>Para saber los albaranes que ya están activos para sacar en almacén, tenemos que acceder a Ventas 🡪
+          Albaranes.</p>
+        <p>Tenemos preparada una vista de <strong>Almacén</strong> donde se muestra el campo <strong>Estado</strong> y
+          las 3 opciones definidas en la vista.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image143.png" /></p>
+        <p>De esta manera se pueden buscar los albaranes que estén en provisional o cualquier otro estado, pero si
+          tenemos esta vista, se mostrarán solo los que cumplan con estos 3 criterios.</p>
+        <p>En esta vista vemos la serie de albarán, que para almacén será en DECA la <strong>A</strong>. La siguiente
+          columna es el código (número) de albarán, fecha y la situación. El cliente, el peso de la expedición y el
+          transporte asignado. </p>
+        <p>La siguiente columna de Resumen, es la que nos indicará si está gestionado o no. Por defecto estará a 0 hasta
+          que se genere resumen, donde se le asignará un número correlativo. Por tanto, todos aquellos albaranes que
+          tengan como Resumen 0, es que no están gestionados. Se puede realizar el filtro para mostrar solamente
+          aquellos que sean igual a 0, así sabremos los que están pendientes.</p>
+        <h4><a id="_Toc235107845"></a>Generar resumen</h4>
+        <p>Una vez tenemos el albarán en la pantalla activado, podemos seleccionar uno o varios de ellos para generar el
+          resumen. Se ha integrado en la pantalla inicial el botón Generar Resumen: </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image144.png" /></p>
+        <p>o bien si elegimos uno o varios albaranes, con el botón derecho, llegamos a esta misma opción.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image145.png" /></p>
+        <p>Posteriormente, tenemos que asignar de un listado desplegable, la persona que va a gestionar esa expedición.
+          Si no queremos asignarlo a algún operario en concreto, podemos elegir la primera que es Sin operario. Así
+          mismo, tenemos la opción de realizar varios resúmenes, de tantos albaranes como hayamos seleccionado, o ir
+          agrupando, como vemos en el check de la pantalla que se muestra.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image146.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image147.png" /></p>
+        <p>Vemos que ahora se ha completado el campo de Resumen</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image148.png" />Y en la pestaña Estado también tenemos la misma
+          información. Desde ahí podemos cambiar el estado de nuestro albarán manualmente.</p>
+        <p><strong>Por tanto, cuando este campo esté a 0 significará que está por hacer el resumen y por tanto, no
+            estará preparándose aún en el almacén.</strong></p>
+        <h4><a id="_Toc235107846"></a>Bultos con picos</h4>
+        <p>Una vez integramos los pedidos, el sistema reconoce las líneas que no se pueden servir por no tener
+          existencias suficientes, y determina los bultos que, según las unidades de embalaje, van a componer esa
+          expedición.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image149.png" />En este caso, vemos un pedido que tienes 1 pico.</p>
+        <p>Si pulsamos doble clic sobre el pedido nos ofrece la información detallada.</p>
+        <p>Como vemos, nos marca en rojo la línea donde no cuadran las cajas con el pedido realizado por el cliente. En
+          este caso, habría que enviarle media caja de la referencia CCA3. Esto lo podemos solucionar, redondeando las
+          cantidades a servir o bien anulando la línea (ya explicado anteriormente en como <a href="#Anular">anular una
+            línea</a>)</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image150.png" /></p>
+        <h4><a id="_Toc235107847"></a>Etiquetas.</h4>
+        <h5>AMAZON</h5>
+        <p>Este proceso es similar para el resto de los clientes, pero ahora nos vamos a enfocar en Amazon. Como sucede
+          actualmente, para el Amazon Seller seguiremos teniendo que imprimir las etiquetas según se descargan de la
+          página de Amazon. </p>
+        <p>En el caso de los pedidos de plataforma o Vendor Central, tenemos que realizar el siguiente proceso.</p>
+        <p>Entramos en Ventas 🡪 Albaranes</p>
+        <p>Seleccionamos el albarán del que queremos imprimir las etiquetas. Y pulsamos dentro de Imprimir en etiquetas
+          de bulto</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image151.png" /></p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image152.png" />Antes de imprimir nos permite previsualizar como
+          saldrán las etiquetas.</p>
+        <p>Para el caso de los albaranes de Amazon, tenemos una plantilla diseñada específicamente. En la parte
+          izquierda podemos seleccionar sobre Amazon Plataformas.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image153.png" /></p>
+        <p>Así tenemos el formato que debemos pegar el cada uno de los bultos del pedido de Amazon.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image154.png" /></p>
+        <h5>OTROS CLIENTES (ALCAMPO, BON PREU… CLIENTES EDI)</h5>
+        <p>Para otros clientes, se imprimían sus etiquetas desde el proveedor de EDI (SERES), <strong>pero con Prologic
+            esto cambia</strong>. Ahora tenemos <strong>creadas las plantillas con los formatos de los clientes con los
+            que se trabaja desde Ediversa</strong> igualmente por si tenemos que sacar las etiquetas desde nuestro ERP.
+        </p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image155.png" /></p>
+        <h4><a id="_Toc235107848"></a>Envíos a agencia</h4>
+        <p>Vamos a comenzar por el caso de la agencia TXT.</p>
+        <p>Cuando hemos generado el resumen, y se han leído los bultos de la expedición, estamos en disposición de
+          enviar el albarán a la agencia.</p>
+        <p><img src="Prologic Grupo JATA v2.0_files/image156.png" />Para ello vamos a Administración 🡪 Exportaciones 🡪
+          Marcamos la opción de TXT </p>
+        <p>Escribimos los datos del albarán que deseamos enviar a la agencia. Si queremos enviar varios, los separaremos
+          por comas.</p>
+        <h4><a id="_Toc235107849"></a>Uso de pda</h4>
+        <p>Vamos a analizar como los operarios del almacén podrán hacer las lecturas de los pedidos que tengan ya cargados previamente en la PDA. 
+          Veremos como acceder desde la PDA y seguir los pasos necesarios para realizar la lectura </p>
+        <div class="imagenes">
+        <img src="Prologic Grupo JATA v2.0_files/PDA1.jpeg" alt="Primera imagen" width="300">
+        <p>Para acceder a las opciones, se debe pulsar en el icono de 3 rayas de la parte superior izquierda. Aparecen entonces, estas dos opciones.</p>
+        <img src="Prologic Grupo JATA v2.0_files/PDA2.jpeg" alt="Segunda imagen" width="300">
+        <p>Si pulsamos en la opción de <strong>Almacen</strong>, nos aparecerá la posibilidad de realizar los movimientos previos para recoger la mercancía de las estanterías del almacén.
+          Por otro lado, si pulsamos en Ventas, iremos directamente a ver las Expediciones que tenemos diseñadas para pasar a prepararla. En este punto, ya tenemos que tener preparadas y pegadas las etiquetas en las cajas correspondientes del pedido.</p>
+    </div>
+        <p><img src="Prologic Grupo JATA v2.0_files/PDA3.jpeg" width="200"></p>
+  </main>
+</body>
+
+</html>
