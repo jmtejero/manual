@@ -744,13 +744,29 @@
           modificaciones.</p>
         <h2><a id="_Toc235107831"></a>PEDIDO DE AMAZON DECA</h2>
         <h4><a id="_Toc235107832"></a>Integración de pedidos.</h4>
-        <h5>Dropship</h5>
+        <h4>Amazon WEB </h4>
+        <ul>
+          <li>
+            Para la importación de pedidos de la página de Amazon, tenemos el archivo que se actualiza desde el almacén llamado fichero_cliente.xls. Este está en la ruta \\192.168.200.229\spyro\webcorreos\tracking.
+            No es necesario copiarlo en ningún otro sitio, directamente se integrará la información que esté en este archivo. Ya se ha previsto que no se dupliquen pedidos, siendo que siempre tenemos que integrar el mismo archivo que se va modificando a lo largo de la jornada de trabajo.
+            Es por ese motivo, que solo se integrarán los nuevos pedidos que contenga el fichero, cada vez que se vaya a realizar la integración.
+            El procedimiento es sencillo, se basa en dos botones que se han colocado en el Menu Secundario.
+            Para acceder a este menú, entramos en Programas, luego en Administración y ahí aparecerá la opción de Menú Secundario. Si elegimos del desplegable Configurar la vista que deseamos, en este caso Comercial, veremos las dos opciones que necesitamos.
+            El primer botón es el de Importar Pedidos y al pulsar automáticamente, se integrarán en Prologic todos los pedidos nuevos que contenga la excel fichero_cliente.xls.
+            El siguiente paso será pulsar en Exportar Tracking, para que se de la respuesta en la página de Amazon y se incluya el número de tracking para cada pedido.
+            Se explica en el siguiente video.
+          </li>
+          <a href="videos/Tracking_Amazon.mp4" target="_blank">
+              Ver video
+            </a>
+        </ul>
+        <h4>Dropship</h4>
         <ul>
           <li>De momento tenemos una carpeta concreta en la ruta G:\P17. Gestión de las TIC\5-Programas
             SPYRO\PROLOGIC\AMAZON\DECA\AMZON donde se guardará el archivo descargado desde la plataforma de Amazon. El
             nombre del archivo a integrar será <strong>amazon-orders-Jata Hogar(JA7FG)</strong>.csv Desde Ventas --
             Pedidos</li>
-            <a href="videos/Pedidos Dropship.mp4"target="_blank">
+            <a href="videos/Pedidos Dropship.mp4" target="_blank">
               Ver video
             </a>
             </a>
